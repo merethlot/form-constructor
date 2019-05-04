@@ -8,24 +8,20 @@ import { FieldConfig } from "../../field.interface";
       <div class="mat-caption">
         {{field.label}}
       </div>
-    </div>
 
-    <div
-        cdkDropList
-        [cdkDropListData]="field.elements"
-        class="droplist"
-        (cdkDropListDropped)="drop($event)">
-        <div class="droplist-box" *ngFor="let field of field.elements; let i = index;" cdkDrag>
-          <div class="icons">
-            <mat-icon (click)="editElement(i)" color="accent">edit</mat-icon>
-            <mat-icon (click)="deleteElement(i)" color="accent">delete</mat-icon>
-         </div>
-         <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
+      <div
+        class="droplist">
+          <div class="droplist-box" *ngFor="let field of field.elements; let i = index;" >
+            <div class="icons">
+              <mat-icon (click)="editElement(i)" color="primary" matTooltip="Edit inner element">edit</mat-icon>
+              <mat-icon (click)="deleteElement(i)" color="primary" matTooltip="Delete inner element">delete</mat-icon>
+           </div>
 
-         <ng-container elementField [field]="field" >
-         </ng-container>
+           <ng-container elementField [field]="field" >
+           </ng-container>
+        </div>
+
       </div>
-
     </div>
 `,
   styles: []

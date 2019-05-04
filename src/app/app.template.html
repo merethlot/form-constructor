@@ -16,18 +16,56 @@
     <div class="content-main-col">
         <div class="droplist-container">
           <h2 class="mat-title">
-            Constructor
+            Form Constructor
           </h2>
   
           <div
             cdkDropList
-            [cdkDropListData]="elements"
+            [cdkDropListData]="elements_form"
             class="droplist"
+            id = "elements_form"
             (cdkDropListDropped)="drop($event)">
-            <div class="droplist-box" *ngFor="let field of elements; let i = index;" cdkDrag>
+            <div class="droplist-box" *ngFor="let field of elements_form; let i = index;" ngClass="box-type-{{field.type}}" cdkDrag>
               <div class="icons">
-                <mat-icon (click)="editElement(i)" color="accent">edit</mat-icon>
-                <mat-icon (click)="deleteElement(i)" color="accent">delete</mat-icon>
+                <mat-icon (click)="editElement(i, elements_form, 'elements_form')" color="accent" matTooltip="Edit element">edit</mat-icon>
+                <mat-icon (click)="deleteElement(i, elements_form)" color="accent" matTooltip="Delete element">delete</mat-icon>
+              </div>
+              <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
+  
+              <ng-container elementField [field]="field" >
+              </ng-container>
+            </div>
+  
+          </div>
+        </div>
+        <div class="droplist-container">
+          <h2 class="mat-title">
+            Field Group Constructor
+            <div 
+              class="group-handle" 
+              cdkDropList
+              [cdkDropListData]="elements_group.elements"
+              id = "elements_group_handle"
+            >
+              
+              <div cdkDrag>
+                <mat-icon cdkDragHandle color="accent" matTooltip="move group">drag_indicator</mat-icon>  
+              </div>
+            </div>
+          </h2>
+  
+          <div
+            cdkDropList
+            [cdkDropListData]="elements_group.elements"
+            class="droplist"
+            id = "elements_group.elements"
+            (cdkDropListDropped)="drop($event)">
+            
+            <div class="droplist-box" *ngFor="let field of elements_group.elements; let i = index;" cdkDrag>
+              <div class="icons">
+                <mat-icon (click)="editElement(i, elements_group.elements, 'elements_group.elements')" color="primary" matTooltip="Edit inner element">edit</mat-icon>
+                <!-- <mat-icon (click)="editGroup(i)" color="accent">view_list</mat-icon> -->
+                <mat-icon (click)="deleteElement(i, elements_group.elements)" color="primary" matTooltip="Delete inner element">delete</mat-icon>
               </div>
               <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
   
@@ -47,7 +85,7 @@
   
           <div
             cdkDropList
-  
+            id = "elements_from"
             [cdkDropListData]="regConfig"
             class="droplist">
             <div class="droplist-box" *ngFor="let item of regConfig" cdkDrag>

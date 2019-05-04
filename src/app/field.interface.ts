@@ -6,7 +6,7 @@ export interface FieldConfig {
   collections?: any;
   type?: string;
   default_value?: any;
-  elements?: any[]
+  elements?: FieldConfig[]
   // validations?: Validator[];
 }
 
@@ -18,5 +18,5 @@ export interface editFieldConfig {
     collections?: any;
     type?: string;
     default_value?: any;
-    elements?: any[]
+    elements?: FieldConfig[]
 }

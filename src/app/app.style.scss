@@ -27,12 +27,19 @@
   align-items: stretch;
   justify-content: space-between;
   background-color: map_get($mat-deep-purple, 300);
+  &-main-col {
+    display: flex;
+  }
 	&-side-col {
 		background-color: map_get($mat-pink, 300);
 	}
   h2 {
     color: $light-secondary-text;
   }
+}
+
+.group-handle {
+  float: right;
 }
 
 .droplist-container {
@@ -75,14 +82,15 @@
   position: relative;
   .icons {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 16px;
+    // transform: translateY(-50%);
     right: 10px;
     cursor: pointer;
   }
 }
 
-.groupbox {
+//.groupbox,
+.box-type-group {
   padding: 20px 10px;
   border-bottom: solid 1px map_get($mat-deep-purple, 500);
   border-top: solid 1px map_get($mat-deep-purple, 500);

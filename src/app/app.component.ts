@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation  } from '@angular/core';
 import { NgxIndexedDB } from 'ngx-indexed-db';
 import { CdkDragDrop, transferArrayItem, copyArrayItem } from '@angular/cdk/drag-drop';
 import { FieldConfig, editFieldConfig } from "./field.interface";
@@ -7,7 +7,8 @@ import { EditFormComponent } from "./components/edit-form/edit-form.component";
 @Component({
     selector: 'my-app',
     templateUrl: './app.template.html',
-    styleUrls: ['./app.style.scss']
+    styleUrls: ['app.style.scss'],
+    encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit { 
   @ViewChild(EditFormComponent) form: EditFormComponent;
@@ -15,7 +16,24 @@ export class AppComponent implements OnInit {
   public currentFormId:number;
   public ifEditElement:boolean = false;
   public formNumber:number = this.currentFormId;
-  regConfig: FieldConfig[] = [
+
+
+  private db:NgxIndexedDB;
+
+  public elements_form:FieldConfig[]       = [];
+  public elements_group:FieldConfig = {
+      type: "group",
+      label: "Group",
+      elements: []
+  }
+
+  public currentElementConfig:editFieldConfig;
+
+  public currentElementId:number;
+
+  public currentForm:string;
+
+  public regConfig: FieldConfig[] = [
     {
       type: "input",
       label: "Username",
@@ -52,21 +70,14 @@ export class AppComponent implements OnInit {
       type: "button",
       label: "Save"
     },
-    {
-      type: "group",
-      label: "Group",
-      elements: []
-    }
+    // {
+    //   type: "group",
+    //   label: "Group",
+    //   elements: []
+    // }
   ];
 
-  private db:NgxIndexedDB;
-
-  public elements:FieldConfig[] = [];
-  public elementsTmp:any[] = [];
-
-  public currentElementConfig:editFieldConfig;
-
-  public currentElementId:number;
+  constructor() {}
 
   getLastKey() {
     var last:string;
@@ -101,10 +112,9 @@ export class AppComponent implements OnInit {
   loadForm(index:number) {
       console.log(index);
       this.currentFormId = index;
-      // this.db.getByKey('form_fields', index).then(
+      // this.db.getByIndex('form_fields', 'id', index).then(
       //     fields => {
       //         console.log(fields);
-      //         return person;
       //     },
       //     error => {
       //         console.log(error);
@@ -112,8 +122,8 @@ export class AppComponent implements OnInit {
       // );
       this.db.getAll('form_fields').then(
           (fields) => {
-              this.elements =  fields[index].element;
-              console.log(this.elements);
+              this.elements_form =  fields[index].element;
+              // console.log(this.elements_form);
           }, (error) => {
               console.log(error);
           });
@@ -142,14 +152,15 @@ export class AppComponent implements OnInit {
       );
   }
 
-  deleteElement(index:number) {
-      this.elements.splice(index, 1);
-      this.updateForm(this.elements, this.currentFormId);
+  deleteElement(index:number, arr:FieldConfig[]) {
+      arr.splice(index, 1);
+      this.updateForm(this.elements_form, this.currentFormId);
   }
 
-  editElement(index:number) {
+  editElement(index:number, arr:FieldConfig[], arr_name:string) {
+      this.currentForm   = arr_name;
       this.ifEditElement = true;
-      this.currentElementConfig = this.elements[index];
+      this.currentElementConfig = arr[index];
       this.currentElementId = index;
   }
 
@@ -157,19 +168,43 @@ export class AppComponent implements OnInit {
 
     console.log(this.currentFormId);
     if (event.previousContainer != event.container) {
-      // copyArrayItem(event.previousContainer.data, this.elementsTmp, event.previousIndex, event.currentIndex);
-      let tmp = {};
-      Object.assign(tmp, event.previousContainer.data[event.previousIndex], JSON.parse(JSON.stringify(event.previousContainer.data[event.previousIndex])));
-      this.elements.splice(event.currentIndex, 0, tmp);
-      console.log(this.elements);
-      this.updateForm(this.elements, this.currentFormId);
+      if (event.previousContainer.id == "elements_group_handle" && event.container.id == "elements_form") {
+          let tmp = {};
+          Object.assign(tmp, this.elements_group, 
+                        JSON.parse(JSON.stringify(
+                          this.elements_group
+                        ))
+          );
+          this.elements_form.splice(event.currentIndex, 0 , tmp);
+          this.elements_group.elements = [];
+          this.updateForm(this.elements_form, this.currentFormId);
+      } else {
+
+        let tmp = {};
+        Object.assign(tmp, event.previousContainer.data[event.previousIndex], 
+                      JSON.parse(JSON.stringify(
+                        event.previousContainer.data[event.previousIndex]
+                      ))
+        );
+        console.log(event.container);
+        eval(`this.${event.container.id}`).splice(event.currentIndex, 0, tmp);
+        console.log(this.elements_form);
+        if (event.previousContainer.id != "elements_from") {
+          event.previousContainer.data.splice(event.previousIndex, 1);
+        }
+
+        this.updateForm(this.elements_form, this.currentFormId);
+        
+      }
+        
+
 
     } else {
       transferArrayItem(event.previousContainer.data,
                         event.container.data,
                         event.previousIndex,
                         event.currentIndex);
-      this.updateForm(this.elements, this.currentFormId);
+      this.updateForm(this.elements_form, this.currentFormId);
     }
   }
 
@@ -180,19 +215,19 @@ export class AppComponent implements OnInit {
             'form_fields', { keyPath: "id", autoIncrement: true });
 
         objectStore.createIndex("element", "element", { unique: false });
+        // objectStore.createIndex("id", "id", { unique: true });
 
     }).then(
       () => {
-        this.addFormToBase(this.elements);
+        this.addFormToBase(this.elements_form);
       }
     );
   }
 
   submitElement(value: any) {
       this.ifEditElement = false;
-      this.elements[this.currentElementId].label = value.label;
-      this.updateForm(this.elements, this.currentElementId);
-      console.log(this.elements, this.currentElementId, this.elements[this.currentElementId]);
+      eval(`this.${this.currentForm}`)[this.currentElementId].label = value.label;
+      this.updateForm(this.elements_form, this.currentElementId);
   }
 
   cancelForm() {

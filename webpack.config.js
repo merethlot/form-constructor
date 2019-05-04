@@ -9,18 +9,18 @@ module.exports = {
         'app': './src/main.ts'
       },
    output:{
-       path: path.resolve(__dirname, './public'),     // путь к каталогу выходных файлов - папка public
+       path: path.resolve(__dirname, './public'),   
        publicPath: '/public/',
-       filename: "[name].js"       // название создаваемого файла
+       filename: "[name].js"  
    },
    resolve: {
     extensions: ['.ts', '.js', '.html']
 
   },
    module:{
-       rules:[   //загрузчик для ts
+       rules:[ 
            {
-               test: /\.ts$/, // определяем тип файлов
+               test: /\.ts$/, 
                use: [
                 {
                     loader: 'awesome-typescript-loader',
@@ -57,8 +57,8 @@ module.exports = {
    plugins: [
     new webpack.ContextReplacementPlugin(
         /angular(\\|\/)core/,
-        path.resolve(__dirname, 'src'), // каталог с исходными файлами
-      {} // карта маршрутов
+        path.resolve(__dirname, 'src'), 
+      {} 
     ),       
     new UglifyJSPlugin()
   ]
