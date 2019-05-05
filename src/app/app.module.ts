@@ -5,6 +5,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AppComponent }   from './app.component';
 
 import { MaterialModule } from "./material.module";
+import { DndListModule } from 'ngx-drag-and-drop-lists';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { InputComponent } from "./components/input/input.component";
 import { ButtonComponent } from "./components/button/button.component";
@@ -23,7 +24,8 @@ import { EditFormComponent } from "./components/edit-form/edit-form.component";
     	FormsModule,
         ReactiveFormsModule,
     	DragDropModule,
-	    MaterialModule
+	    MaterialModule,
+        DndListModule
     ],
     declarations: [ 
 	    AppComponent,

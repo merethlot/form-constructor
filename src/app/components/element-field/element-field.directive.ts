@@ -30,6 +30,7 @@ const componentMapper = {
 })
 export class ElementFieldDirective implements OnInit {
   @Input() field: FieldConfig;
+  @Input() fieldId: number;
   @Input() group: FormGroup;
   componentRef: any;
   constructor(

@@ -22,9 +22,11 @@
     "css-loader": "^2.1.1",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "indexeddb-angular": "^0.1.8",
+    "ngx-drag-and-drop-lists": "^1.2.5",
     "ngx-indexed-db": "^2.0.5",
     "normalize.css": "^8.0.1",
     "rxjs": "^6.5.1",
+    "rxjs-compat": "^6.5.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
