@@ -69,12 +69,7 @@ export class AppComponent implements OnInit {
     {
       type: "button",
       label: "Save"
-    },
-    // {
-    //   type: "group",
-    //   label: "Group",
-    //   elements: []
-    // }
+    }
   ];
 
   constructor() {}
@@ -89,12 +84,7 @@ export class AppComponent implements OnInit {
         } else {
             console.log('Entries all displayed.');
         }
-    }).then(
-        () => {
-          // this.currentFormId = last;
-          // return last;
-        }
-    );
+    });
   }
 
   addFormToBase(element:FieldConfig[]) {
@@ -110,23 +100,16 @@ export class AppComponent implements OnInit {
   }
 
   loadForm(index:number) {
-      console.log(index);
+      if (typeof(index) == 'string') {index = parseInt(index);}
       this.currentFormId = index;
-      // this.db.getByIndex('form_fields', 'id', index).then(
-      //     fields => {
-      //         console.log(fields);
-      //     },
-      //     error => {
-      //         console.log(error);
-      //     }
-      // );
-      this.db.getAll('form_fields').then(
-          (fields) => {
-              this.elements_form =  fields[index].element;
-              // console.log(this.elements_form);
-          }, (error) => {
+      this.db.getByKey('form_fields', index).then(
+          fields => {
+              this.elements_form = fields.element;
+          },
+          error => {
               console.log(error);
-          });
+          }
+      );
 
   }
 
@@ -195,9 +178,7 @@ export class AppComponent implements OnInit {
 
         this.updateForm(this.elements_form, this.currentFormId);
         
-      }
-        
-
+      }        
 
     } else {
       transferArrayItem(event.previousContainer.data,
@@ -215,7 +196,6 @@ export class AppComponent implements OnInit {
             'form_fields', { keyPath: "id", autoIncrement: true });
 
         objectStore.createIndex("element", "element", { unique: false });
-        // objectStore.createIndex("id", "id", { unique: true });
 
     }).then(
       () => {

@@ -64,7 +64,6 @@
             <div class="droplist-box" *ngFor="let field of elements_group.elements; let i = index;" cdkDrag>
               <div class="icons">
                 <mat-icon (click)="editElement(i, elements_group.elements, 'elements_group.elements')" color="primary" matTooltip="Edit inner element">edit</mat-icon>
-                <!-- <mat-icon (click)="editGroup(i)" color="accent">view_list</mat-icon> -->
                 <mat-icon (click)="deleteElement(i, elements_group.elements)" color="primary" matTooltip="Delete inner element">delete</mat-icon>
               </div>
               <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
@@ -73,6 +72,9 @@
               </ng-container>
             </div>
   
+          </div>
+          <div class="subheading-1">
+            Warning! You cannot edit the form after adding
           </div>
         </div>
       

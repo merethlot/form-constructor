@@ -2,8 +2,6 @@
 
 @include mat-core();
 
-//@include angular-material-theme($indigo-pink-theme);
-
 .mat-title {
   color: white;
 }
@@ -30,9 +28,9 @@
   &-main-col {
     display: flex;
   }
-	&-side-col {
-		background-color: map_get($mat-pink, 300);
-	}
+  &-side-col {
+    background-color: map_get($mat-pink, 300);
+  }
   h2 {
     color: $light-secondary-text;
   }
@@ -87,6 +85,12 @@
     right: 10px;
     cursor: pointer;
   }
+}
+
+.droplist-custom-placeholder {
+  @extend .droplist-box;
+  background-color: map_get($mat-deep-purple, 700);
+  opacity: .7;
 }
 
 //.groupbox,

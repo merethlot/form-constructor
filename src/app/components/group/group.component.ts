@@ -24,15 +24,15 @@ import { FieldConfig } from "../../field.interface";
       </div>
     </div>
 `,
-  styles: []
+  styles: [`
+      :host {
+      width: 100%;
+    }
+    `]
 })
 export class GroupComponent implements OnInit {
   field: FieldConfig;
-  // group: FormGroup;
   constructor() {}
 
-  drop(event: Event) {
-    console.log('aaa');
-  }
   ngOnInit() {}
 }
