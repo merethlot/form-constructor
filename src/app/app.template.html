@@ -45,11 +45,15 @@
               class="group-handle" 
               cdkDropList
               [cdkDropListData]="elements_group.elements"
-              id = "elements_group_handle"
-            >
-              
+              id = "elements_group_handle">
               <div cdkDrag>
-                <mat-icon cdkDragHandle color="accent" matTooltip="move group">drag_indicator</mat-icon>  
+                <mat-icon cdkDragHandle color="accent" matTooltip="move group">drag_indicator</mat-icon>
+                <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
+                <div *cdkDragPreview class="droplist-custom-preview">
+                  <h2 class="mat-title">
+                    Field Group
+                  </h2>
+                </div>
               </div>
             </div>
           </h2>
@@ -74,7 +78,7 @@
   
           </div>
           <div class="subheading-1">
-            Warning! You cannot edit the form after adding
+            Warning! You cannot edit this form after adding
           </div>
         </div>
       
