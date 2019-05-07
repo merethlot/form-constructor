@@ -78,13 +78,13 @@ export class AppComponent implements OnInit {
 
   getLastKey() {
     var last:string;
-    this.db.openCursor('form_fields', (evt) => {
+    this.db.openCursor('form_fields', (evt:any) => {
         var cursor = (<any>evt.target).result;
         if(cursor) {
             this.currentFormId = cursor.key;
             cursor.continue();
         } else {
-            console.log('Entries all displayed.');
+            // console.log('Entries all displayed.');
         }
     });
   }
@@ -105,10 +105,10 @@ export class AppComponent implements OnInit {
       if (typeof(index) == 'string') {index = parseInt(index);}
       this.currentFormId = index;
       this.db.getByKey('form_fields', index).then(
-          fields => {
+          (fields:any) => {
               this.elements_form = fields.element;
           },
-          error => {
+          (error:any) => {
               console.log(error);
           }
       );
@@ -120,7 +120,7 @@ export class AppComponent implements OnInit {
         () => {
             // Do something after update
         },
-        error => {
+        (error :any)=> {
             console.log(error);
         }
     );
@@ -131,7 +131,7 @@ export class AppComponent implements OnInit {
           () => {
               // Do something after delete
           },
-          error => {
+          (error:any) => {
               console.log(error);
           }
       );
