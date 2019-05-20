@@ -4,107 +4,70 @@
       Form #{{currentFormId}}
     </h2>
     <div>
-      <mat-form-field class="">
-        <input matInput placeholder="Enter form number" value=""  [(ngModel)]="formNumber">
-      </mat-form-field>        
+      <mat-form-field>
+        <input matInput placeholder="Enter form number" [(ngModel)]="formNumber">
+      </mat-form-field>
       <button mat-flat-button color="accent" (click)="loadForm(formNumber)">Go</button>
-
     </div>
   </div>
-  <div class="content" cdkDropListGroup>
-  
+  <div class="content">
     <div class="content-main-col">
-        <div class="droplist-container">
-          <h2 class="mat-title">
-            Form Constructor
-          </h2>
-  
-          <div
-            cdkDropList
-            [cdkDropListData]="elements_form"
-            class="droplist"
-            id = "elements_form"
-            (cdkDropListDropped)="drop($event)">
-            <div class="droplist-box" *ngFor="let field of elements_form; let i = index;" ngClass="box-type-{{field.type}}" cdkDrag>
-              <div class="icons">
-                <mat-icon (click)="editElement(i, elements_form, 'elements_form')" color="accent" matTooltip="Edit element">edit</mat-icon>
-                <mat-icon (click)="deleteElement(i, elements_form)" color="accent" matTooltip="Delete element">delete</mat-icon>
+      <div class="droplist-container">
+        <h2 class="mat-title">
+          Form Constructor
+        </h2>
+
+        <div class="droplist" 
+          [dndList]="{
+          allowedTypes: ['group', 'button', 'date', 'input', 'radiobutton', 'select', 'checkbox']}"
+          [dndModel]="elements_form"
+          [dndPlaceholder]="placeholder">
+          <div *ngFor="let item of elements_form; let i = index;">
+
+            <div class="droplist-box"
+              [dndType]="item.type"
+              [dndDraggable]
+              (dndMoved)="dropElement(item, elements_form)"
+              [dndObject]="item">
+                <div class="icons">
+                  <mat-icon (click)="editElement(i, elements_form)" color="accent" matTooltip="Edit element">edit</mat-icon>
+                  <mat-icon (click)="deleteElement(i, elements_form)" color="accent" matTooltip="Delete element">delete</mat-icon>
+                </div>              
+                <app-group [field]="item" *ngIf="item.type === 'group'" [fieldId]="i" (editInGroup)="editInGroup($event)" (deleteFromGroup)="deleteFromGroup($event)"></app-group>
+                <ng-container elementField [field]="item" *ngIf="item.type != 'group'"></ng-container>
               </div>
-              <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
-  
-              <ng-container elementField [field]="field" >
-              </ng-container>
-            </div>
-  
           </div>
         </div>
-        <div class="droplist-container">
-          <h2 class="mat-title">
-            Field Group Constructor
-            <div 
-              class="group-handle" 
-              cdkDropList
-              [cdkDropListData]="elements_group.elements"
-              id = "elements_group_handle"
-            >
-              
-              <div cdkDrag>
-                <mat-icon cdkDragHandle color="accent" matTooltip="move group">drag_indicator</mat-icon>  
-              </div>
-            </div>
-          </h2>
-  
-          <div
-            cdkDropList
-            [cdkDropListData]="elements_group.elements"
-            class="droplist"
-            id = "elements_group.elements"
-            (cdkDropListDropped)="drop($event)">
-            
-            <div class="droplist-box" *ngFor="let field of elements_group.elements; let i = index;" cdkDrag>
-              <div class="icons">
-                <mat-icon (click)="editElement(i, elements_group.elements, 'elements_group.elements')" color="primary" matTooltip="Edit inner element">edit</mat-icon>
-                <!-- <mat-icon (click)="editGroup(i)" color="accent">view_list</mat-icon> -->
-                <mat-icon (click)="deleteElement(i, elements_group.elements)" color="primary" matTooltip="Delete inner element">delete</mat-icon>
-              </div>
-              <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>
-  
-              <ng-container elementField [field]="field" >
-              </ng-container>
-            </div>
-  
-          </div>
-        </div>
-      
+
+      </div>
     </div>
     <div class="content-side-col">
-        <div class="droplist-container" *ngIf="!ifEditElement">
-          <h2 class="mat-title">
-            Fields
-          </h2>
-  
-          <div
-            cdkDropList
-            id = "elements_from"
-            [cdkDropListData]="regConfig"
-            class="droplist">
-            <div class="droplist-box" *ngFor="let item of regConfig" cdkDrag>
-              <div class="droplist-custom-placeholder" *cdkDragPlaceholder></div>{{item.type}}
-            </div>
+      <div class="droplist-container" *ngIf="!ifEditElement">
+        <h2 class="mat-title">
+          Fields
+        </h2>
+        <div class="droplist">
+          <div class="droplist-box" 
+            *ngFor="let template of regConfig"
+            [dndType]="template.type"
+            [dndDraggable]="{effectAllowed:'copy'}"
+            [dndObject]="template"
+            (dndCopied)="moveElement(template)">
+            {{template.type}}
           </div>
+        </div>        
+
+      </div>
+      <div class="form form-container" *ngIf="ifEditElement">
+        <div class="form-box">
+    
+        <edit-form [fields]="currentElementConfig" (submit)="submitElement($event)">
+        </edit-form>
         </div>
-      
-        <div class="form form-container" *ngIf="ifEditElement">
-          <div class="form-box">
-  
-            <edit-form [fields]="currentElementConfig" (submit)="submitElement($event)">
-            </edit-form>
-          </div>
-        </div>
-  
-  
+      </div>
     </div>
-  
-  
   </div>
 </div>
+
+<div class="dndPlaceholder droplist-custom-placeholder"
+#placeholder></div>

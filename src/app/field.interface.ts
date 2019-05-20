@@ -1,5 +1,6 @@
 export interface FieldConfig {
   label?: string;
+  id?: number;
   name?: string;
   inputType?: string;
   options?: string[];
@@ -12,6 +13,7 @@ export interface FieldConfig {
 
 export interface editFieldConfig {
     label?: string;
+    id?: number;
     name?: string;
     inputType?: string;
     options?: string[];

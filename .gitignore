@@ -3,3 +3,5 @@
 /dist
 /.vagrant
 .notes
+/src/**/*.js
+/src/**/*.map

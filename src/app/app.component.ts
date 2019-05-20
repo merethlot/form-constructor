@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation  } from '@angular/core';
 import { NgxIndexedDB } from 'ngx-indexed-db';
-import { CdkDragDrop, transferArrayItem, copyArrayItem } from '@angular/cdk/drag-drop';
 import { FieldConfig, editFieldConfig } from "./field.interface";
 import { EditFormComponent } from "./components/edit-form/edit-form.component";
+import {GroupComponent} from "./components/group/group.component";
 
 @Component({
     selector: 'my-app',
@@ -12,11 +12,12 @@ import { EditFormComponent } from "./components/edit-form/edit-form.component";
 })
 export class AppComponent implements OnInit { 
   @ViewChild(EditFormComponent) form: EditFormComponent;
+  @ViewChild(GroupComponent) group: GroupComponent;
   
   public currentFormId:number;
-  public ifEditElement:boolean = false;
   public formNumber:number = this.currentFormId;
-
+  public ifEditElement:boolean = false;
+  public ifEditGroup:boolean = false;
 
   private db:NgxIndexedDB;
 
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit {
   public currentElementConfig:editFieldConfig;
 
   public currentElementId:number;
+  public currentGroupId:number;
 
   public currentForm:string;
 
@@ -38,63 +40,53 @@ export class AppComponent implements OnInit {
       type: "input",
       label: "Username",
       inputType: "text",
-      // name: "name",
       default_value: ""
     },
     {
       type: "radiobutton",
       label: "Gender",
-      // name: "gender",
       options: ["Male", "Female"],
       default_value: "Male"
     },
     {
       type: "date",
       label: "DOB",
-      // name: "dob",
     },
     {
       type: "select",
       label: "Country",
-      // name: "country",
       default_value: "UK",
       options: ["India", "UAE", "UK", "US"]
     },
     {
       type: "checkbox",
       label: "Accept Terms",
-      // name: "term",
       default_value: true
     },
     {
       type: "button",
-      label: "Save"
+      label: "Save",
     },
-    // {
-    //   type: "group",
-    //   label: "Group",
-    //   elements: []
-    // }
+    {
+      type: "group",
+      label: "Group",
+      elements: []
+    }
   ];
 
   constructor() {}
 
   getLastKey() {
     var last:string;
-    this.db.openCursor('form_fields', (evt) => {
+    this.db.openCursor('form_fields', (evt:any) => {
         var cursor = (<any>evt.target).result;
         if(cursor) {
             this.currentFormId = cursor.key;
             cursor.continue();
         } else {
-            console.log('Entries all displayed.');
+            // console.log('Entries all displayed.');
         }
-    }).then(
-        () => {
-          // this.currentFormId = last;
-          // return last;
-        }
-    );
+    });
   }
 
   addFormToBase(element:FieldConfig[]) {
@@ -110,23 +102,16 @@ export class AppComponent implements OnInit {
   }
 
   loadForm(index:number) {
-      console.log(index);
+      if (typeof(index) == 'string') {index = parseInt(index);}
       this.currentFormId = index;
-      // this.db.getByIndex('form_fields', 'id', index).then(
-      //     fields => {
-      //         console.log(fields);
-      //     },
-      //     error => {
-      //         console.log(error);
-      //     }
-      // );
-      this.db.getAll('form_fields').then(
-          (fields) => {
-              this.elements_form =  fields[index].element;
-              // console.log(this.elements_form);
-          }, (error) => {
+      this.db.getByKey('form_fields', index).then(
+          (fields:any) => {
+              this.elements_form = fields.element;
+          },
+          (error:any) => {
               console.log(error);
-          });
+          }
+      );
 
   }
 
@@ -135,7 +120,7 @@ export class AppComponent implements OnInit {
         () => {
             // Do something after update
         },
-        error => {
+        (error :any)=> {
             console.log(error);
         }
     );
@@ -146,7 +131,7 @@ export class AppComponent implements OnInit {
           () => {
               // Do something after delete
           },
-          error => {
+          (error:any) => {
               console.log(error);
           }
       );
@@ -157,55 +142,36 @@ export class AppComponent implements OnInit {
       this.updateForm(this.elements_form, this.currentFormId);
   }
 
-  editElement(index:number, arr:FieldConfig[], arr_name:string) {
-      this.currentForm   = arr_name;
+
+  deleteFromGroup(element:any) {
+    console.log(element);
+    this.elements_form[element.id] = element.el;
+    this.updateForm(this.elements_form, this.currentFormId);
+  }
+
+  editInGroup(element:any) {
+    console.log(element);
+    this.ifEditElement = true;
+    this.currentElementConfig = element.el;
+    this.currentElementId = element.id;
+    this.currentGroupId = element.index;
+    this.ifEditGroup = true;
+  }
+
+  editElement(index:number, arr:FieldConfig[]) {
       this.ifEditElement = true;
       this.currentElementConfig = arr[index];
       this.currentElementId = index;
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  moveElement(item: any) {
+    this.updateForm(this.elements_form, this.currentFormId);
+  }
 
-    console.log(this.currentFormId);
-    if (event.previousContainer != event.container) {
-      if (event.previousContainer.id == "elements_group_handle" && event.container.id == "elements_form") {
-          let tmp = {};
-          Object.assign(tmp, this.elements_group, 
-                        JSON.parse(JSON.stringify(
-                          this.elements_group
-                        ))
-          );
-          this.elements_form.splice(event.currentIndex, 0 , tmp);
-          this.elements_group.elements = [];
-          this.updateForm(this.elements_form, this.currentFormId);
-      } else {
+  dropElement(item: any, list: any[]) {
+    list.splice(list.indexOf(item), 1);
+    this.updateForm(this.elements_form, this.currentFormId);
 
-        let tmp = {};
-        Object.assign(tmp, event.previousContainer.data[event.previousIndex], 
-                      JSON.parse(JSON.stringify(
-                        event.previousContainer.data[event.previousIndex]
-                      ))
-        );
-        console.log(event.container);
-        eval(`this.${event.container.id}`).splice(event.currentIndex, 0, tmp);
-        console.log(this.elements_form);
-        if (event.previousContainer.id != "elements_from") {
-          event.previousContainer.data.splice(event.previousIndex, 1);
-        }
-
-        this.updateForm(this.elements_form, this.currentFormId);
-        
-      }
-        
-
-
-    } else {
-      transferArrayItem(event.previousContainer.data,
-                        event.container.data,
-                        event.previousIndex,
-                        event.currentIndex);
-      this.updateForm(this.elements_form, this.currentFormId);
-    }
   }
 
   ngOnInit(){
@@ -215,7 +181,6 @@ export class AppComponent implements OnInit {
             'form_fields', { keyPath: "id", autoIncrement: true });
 
         objectStore.createIndex("element", "element", { unique: false });
-        // objectStore.createIndex("id", "id", { unique: true });
 
     }).then(
       () => {
@@ -226,12 +191,19 @@ export class AppComponent implements OnInit {
 
   submitElement(value: any) {
       this.ifEditElement = false;
-      eval(`this.${this.currentForm}`)[this.currentElementId].label = value.label;
-      this.updateForm(this.elements_form, this.currentElementId);
+      if (this.elements_form[this.currentElementId].hasOwnProperty('elements') && this.ifEditGroup == true ) {
+          this.elements_form[this.currentElementId].elements[this.currentGroupId].label = value.label;
+          this.ifEditGroup = false;
+      } else {
+          this.elements_form[this.currentElementId].label = value.label;
+      }
+
+      this.updateForm(this.elements_form, this.currentFormId);
   }
 
   cancelForm() {
       this.ifEditElement = false;
   }
+
 
 }

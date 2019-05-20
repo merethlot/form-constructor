@@ -60,47 +60,17 @@ export class EditFormComponent implements OnInit {
     event.stopPropagation();
     console.log(this.form.value);
     this.submit.emit(this.form.value);
-
-    // if (this.form.valid) {
-    //   this.submit.emit(this.form.value);
-    // } else {
-    //   this.validateAllFormFields(this.form);
-    // }
   }
 
   createControl() {
     const group = this.fb.group({});
     const control = this.fb.control(
         this.fields.label
-        // this.bindValidations(field.validations || [])
+
     );
     group.addControl('label', control);
-    // this.fields.forEach(field => {
-    //   // if (field.type === "button") return;
-    //   const control = this.fb.control(
-    //     field.default_value,
-    //     // this.bindValidations(field.validations || [])
-    //   );
-    //   group.addControl(field.name, control);
-    // });
+
     return group;
   }
 
-  // bindValidations(validations: any) {
-  //   if (validations.length > 0) {
-  //     const validList = [];
-  //     validations.forEach(valid => {
-  //       validList.push(valid.validator);
-  //     });
-  //     return Validators.compose(validList);
-  //   }
-  //   return null;
-  // }
-
-  // validateAllFormFields(formGroup: FormGroup) {
-  //   Object.keys(formGroup.controls).forEach(field => {
-  //     const control = formGroup.get(field);
-  //     control.markAsTouched({ onlySelf: true });
-  //   });
-  // }
 }
