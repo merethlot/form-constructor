@@ -4,9 +4,10 @@
       Form #{{currentFormId}}
     </h2>
     <div>
-      <mat-form-field class="">
-        <input matInput placeholder="Enter form number" value=""  [(ngModel)]="formNumber">
+      <mat-form-field class="field-wbtn">
+        <input matInput placeholder="Enter form number" [(ngModel)]="formNumber">
       </mat-form-field>        
+
       <button mat-flat-button color="accent" (click)="loadForm(formNumber)">Go</button>
 
     </div>
